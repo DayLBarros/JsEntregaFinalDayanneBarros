@@ -1,98 +1,101 @@
-const MAX_TASKS = 10; 
-let taskList = []; 
+let taskList = [];
 
-class Task {
-    constructor(title, description, priority) {
-        if (!title || typeof title !== "string") {
-            throw new Error("O título da tarefa deve ser uma string não vazia.");
-        }
-        if (!["Alta", "Média", "Baixa"].includes(priority)) {
-            throw new Error("A prioridade deve ser 'Alta', 'Média' ou 'Baixa'.");
-        }
-
-        this.title = title;
-        this.description = description || "Sem descrição"; 
-        this.priority = priority;
-        this.completed = false; 
-    }
-
-    markAsCompleted() {
-        this.completed = true;
-    }
-
-    displayTask() {
-        console.log(`Título: ${this.title}`);
-        console.log(`Descrição: ${this.description}`);
-        console.log(`Prioridade: ${this.priority}`);
-        console.log(`Status: ${this.completed ? "Concluída" : "Pendente"}`);
-    }
-}
-
-function addTask(title, description, priority) {
-    if (taskList.length >= MAX_TASKS) {
-        console.warn("Número máximo de tarefas atingido. Não é possível adicionar mais tarefas.");
-        return;
-    }
-
-    try {
-        const newTask = new Task(title, description, priority);
-        taskList.push(newTask);
-        console.log(`Tarefa "${title}" adicionada com sucesso!`);
-    } catch (error) {
-        console.error(`Erro ao adicionar tarefa: ${error.message}`);
-    }
-}
-
-function removeTask(title) {
-    const initialLength = taskList.length;
-    taskList = taskList.filter(task => task.title !== title);
-
-    if (taskList.length === initialLength) {
-        console.warn(`Nenhuma tarefa encontrada com o título "${title}".`);
-    } else {
-        console.log(`Tarefa "${title}" removida com sucesso.`);
-    }
-}
-
-function listTasks() {
+// Renderiza as tarefas na página
+function renderTasks() {
+    const container = document.getElementById("taskContainer");
     if (taskList.length === 0) {
-        console.log("Nenhuma tarefa cadastrada.");
+        container.innerHTML = "<p>Nenhuma tarefa cadastrada.</p>";
         return;
     }
 
-    console.log("Lista de Tarefas:");
+    let html = "<ul>";
     taskList.forEach((task, index) => {
-        console.log(`\nTarefa ${index + 1}:`);
-        task.displayTask();
+        // Definir classe de status
+        let taskClass = "task-pending"; // Classe padrão para tarefas pendentes
+        if (task.started) {
+            taskClass = "task-started"; // Classe para tarefas iniciadas
+        } else if (task.completed) {
+            taskClass = "task-completed"; // Classe para tarefas concluídas
+        }
+
+        html += `
+            <li class="${taskClass}">
+                <strong>${task.title}</strong> - ${task.priority}<br>
+                ${task.description || "Sem descrição"}<br>
+                Status: ${task.completed ? "Concluída" : (task.started ? "Iniciada" : "Pendente")}<br>
+                <button onclick="startTask(${index})" ${task.started || task.completed ? 'disabled' : ''}>Iniciar</button>
+                <button onclick="completeTask(${index})" ${task.completed ? 'disabled' : ''}>Concluir</button>
+                <button onclick="removeTask(${index})">Remover</button>
+            </li>
+        `;
     });
+    html += "</ul>";
+
+    container.innerHTML = html;
 }
 
-function completeTask(title) {
-    const task = taskList.find(task => task.title === title);
+// Adiciona uma nova tarefa
+function addTask(title, description, priority) {
+    const task = {
+        title,
+        description,
+        priority,
+        completed: false,
+        started: false // Nova propriedade para indicar que a tarefa foi iniciada
+    };
+    taskList.push(task);
+    renderTasks();
+}
 
-    if (!task) {
-        console.warn(`Nenhuma tarefa encontrada com o título "${title}".`);
+// Marca a tarefa como iniciada
+function startTask(index) {
+    taskList[index].started = true; // Marca a tarefa como iniciada
+    renderTasks(); // Atualiza a lista de tarefas
+}
+
+// Marca a tarefa como concluída
+function completeTask(index) {
+    taskList[index].completed = true; // Marca a tarefa como concluída
+    renderTasks(); // Atualiza a lista de tarefas
+}
+
+// Remove uma tarefa
+function removeTask(index) {
+    taskList.splice(index, 1);
+    renderTasks();
+}
+
+// Switch de temas (claro ou escuro)
+function switchTheme(theme) {
+    const validThemes = ["light", "dark"];
+    if (!validThemes.includes(theme)) {
+        console.error("Tema inválido. Escolha entre 'light' ou 'dark'.");
         return;
     }
 
-    task.markAsCompleted();
-    console.log(`Tarefa "${title}" marcada como concluída.`);
+    document.body.className = ""; // Limpa classes antigas
+    document.body.classList.add(theme);
+
+    localStorage.setItem("selectedTheme", theme);
+    console.log(`Tema alterado para: ${theme}`);
 }
 
-addTask("Estudar JavaScript", "Revisar conceitos de ES6", "Alta");
-addTask("Comprar mantimentos", "Frutas, legumes e pão", "Média");
-addTask("Limpar o quarto", null, "Baixa");
+document.getElementById("taskForm").addEventListener("submit", function (event) {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
+    const title = document.getElementById("taskTitle").value;
+    const description = document.getElementById("taskDescription").value;
+    const priority = document.getElementById("taskPriority").value;
 
-listTasks();
+    addTask(title, description, priority); // Adiciona a tarefa
 
-completeTask("Estudar JavaScript");
+    document.getElementById("taskTitle").value = "";
+    document.getElementById("taskDescription").value = "";
+});
 
-removeTask("Tarefa inexistente");
+document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("selectedTheme") || "light";
+    switchTheme(savedTheme);
+});
 
-removeTask("Comprar mantimentos");
-
-listTasks();
-
-for (let i = 1; i <= 11; i++) {
-    addTask(`Tarefa Extra ${i}`, `Descrição da tarefa extra ${i}`, "Baixa");
-}
+// Função para inicializar e renderizar as tarefas ao carregar a página
+renderTasks();

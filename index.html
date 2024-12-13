@@ -8,9 +8,16 @@
 </head>
 <body>
     <h1>Gerenciador de Tarefas</h1>
+
+    <div>
+        <button onclick="switchTheme('light')">Tema Claro</button>
+        <button onclick="switchTheme('dark')">Tema Escuro</button>
+    </div>
+
     <div id="taskContainer">
         <p>Nenhuma tarefa cadastrada.</p>
     </div>
+    
     <h2>Adicionar Nova Tarefa</h2>
     <form id="taskForm">
         <label>
@@ -31,10 +38,12 @@
         </label>
         <button type="submit">Adicionar Tarefa</button>
     </form>
+
     <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
 
     <script>
         let taskList = [];
+
         function renderTasks() {
             const container = document.getElementById("taskContainer");
             if (taskList.length === 0) {
@@ -48,8 +57,9 @@
                     <li>
                         <strong>${task.title}</strong> - ${task.priority}<br>
                         ${task.description || "Sem descrição"}<br>
-                        Status: ${task.completed ? "Concluída" : "Pendente"}<br>
-                        <button onclick="completeTask(${index})">Concluir</button>
+                        Status: ${task.completed ? "Concluída" : (task.started ? "Iniciada" : "Pendente")}<br>
+                        <button onclick="startTask(${index})" ${task.started || task.completed ? 'disabled' : ''}>Iniciar</button>
+                        <button onclick="completeTask(${index})" ${task.completed ? 'disabled' : ''}>Concluir</button>
                         <button onclick="removeTask(${index})">Remover</button>
                     </li>
                 `;
@@ -64,19 +74,25 @@
                 title,
                 description,
                 priority,
-                completed: false
+                completed: false,
+                started: false  // Adiciona a propriedade 'started' para controlar o estado
             };
             taskList.push(task);
             renderTasks();
         }
 
+        function startTask(index) {
+            taskList[index].started = true;  // Marca a tarefa como iniciada
+            renderTasks();
+        }
+
         function completeTask(index) {
-            taskList[index].completed = true;
+            taskList[index].completed = true;  // Marca a tarefa como concluída
             renderTasks();
         }
 
         function removeTask(index) {
-            taskList.splice(index, 1);
+            taskList.splice(index, 1);  // Remove a tarefa da lista
             renderTasks();
         }
 
@@ -92,8 +108,27 @@
             document.getElementById("taskDescription").value = "";
         });
 
+        function switchTheme(theme) {
+            const validThemes = ["light", "dark"];
+            if (!validThemes.includes(theme)) {
+                console.error("Tema inválido. Escolha entre 'light' ou 'dark'.");
+                return;
+            }
+
+            document.body.className = ""; // Limpa classes antigas
+            document.body.classList.add(theme);
+
+            localStorage.setItem("selectedTheme", theme);
+            console.log(`Tema alterado para: ${theme}`);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem("selectedTheme") || "light";
+            switchTheme(savedTheme);
+        });
+
         renderTasks();
     </script>
-    <script src="js/scritp.js"></script>
 </body>
 </html>
+
