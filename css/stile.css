@@ -16,20 +16,20 @@ h2 {
 }
 
 #taskContainer {
-    width: 100%; /* Certifica-se de que o contêiner ocupe 100% da largura do seu elemento pai */
+    width: 100%;
     margin: 20px 0;
     padding: 10px;
     border: 1px solid #ddd;
     background-color: #fff;
     border-radius: 5px;
-    box-sizing: border-box; /* Inclui o padding e a borda no cálculo da largura */
+    box-sizing: border-box;
 }
 
 input[type="text"], textarea {
-    width: 100%; /* A caixa de texto vai ocupar toda a largura do contêiner */
-    padding: 8px; /* Ajusta o padding interno */
-    margin: 0; /* Remove a margem extra */
-    box-sizing: border-box; /* Certifica-se de que o padding e a borda estão incluídos na largura */
+    width: 100%;
+    padding: 8px;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 ul {
@@ -42,28 +42,28 @@ li {
     border: 1px solid #ddd;
     margin: 10px 0;
     padding: 10px;
-    background-color: #f9f9f9;  /* Cor de fundo padrão, vai ser substituída pelas classes dinâmicas */
+    background-color: #f9f9f9;
     border-radius: 5px;
     position: relative;
-    box-sizing: border-box; /* Certifica-se que padding não sobrescreve o layout */
+    box-sizing: border-box;
 }
 
 /* Classe para tarefas pendentes */
 .task-pending {
-    background-color: #f5f5f5; /* Cor neutra para tarefas pendentes */
-    border-left: 5px solid #bdbdbd; /* Borda cinza para distinguir */
+    background-color: #f5f5f5;
+    border-left: 5px solid #bdbdbd;
 }
 
 /* Classe para tarefas iniciadas */
 .task-started {
-    background-color: #ffeb3b; /* Cor amarela para tarefas iniciadas */
-    border-left: 5px solid #fbc02d; /* Borda amarela para destacar */
+    background-color: #ffeb3b;
+    border-left: 5px solid #fbc02d;
 }
 
 /* Classe para tarefas concluídas */
 .task-completed {
-    background-color: #8bc34a; /* Cor verde para tarefas concluídas */
-    border-left: 5px solid #388e3c; /* Borda verde para destacar */
+    background-color: #8bc34a;
+    border-left: 5px solid #388e3c;
 }
 
 li strong {
@@ -78,6 +78,7 @@ li button {
     border: none;
     border-radius: 3px;
     cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s ease-in-out; /* Suaviza a transição */
 }
 
 /* Botões de ação para tarefas */
@@ -88,6 +89,7 @@ li button:first-child {
 
 li button:first-child:hover {
     background-color: #45a049;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona sombra ao passar o mouse */
 }
 
 li button:last-child {
@@ -97,6 +99,12 @@ li button:last-child {
 
 li button:last-child:hover {
     background-color: #e53935;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona sombra ao passar o mouse */
+}
+
+/* Efeitos de transição e sombra para os outros botões */
+li button:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave nos outros botões */
 }
 
 #taskForm {
@@ -145,6 +153,35 @@ body.dark {
     color: black;
 }
 
+body.dark li,
+body.dark #taskForm,
+body.dark #taskContainer {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark li strong,
+body.dark li p,
+body.dark li select {
+    color: #fff;
+}
+
+body.dark li button:first-child {
+    background-color: #4CAF50;
+}
+
+body.dark li button:first-child:hover {
+    background-color: #45a049;
+}
+
+body.dark li button:last-child {
+    background-color: #f44336;
+}
+
+body.dark li button:last-child:hover {
+    background-color: #e53935;
+}
+
 button {
     margin: 10px;
     padding: 10px;
@@ -170,28 +207,15 @@ button {
 }
 
 .task-started {
-    background-color: #ffeb3b; /* Cor amarela para tarefas iniciadas */
+    background-color: #ffeb3b;
 }
 
-/* Adiciona cor para tarefas concluídas */
 .task-completed {
-    background-color: #8bc34a; /* Cor verde para tarefas concluídas */
+    background-color: #8bc34a;
 }
 
-/* Estilo padrão para tarefas não iniciadas */
 .task-pending {
-    background-color: #f5f5f5; /* Cor neutra para tarefas pendentes */
-}
-
-/* Melhorar visual do botão */
-button {
-    margin-top: 5px;
-    padding: 5px 10px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #f5f5f5;
 }
 
 button:disabled {
